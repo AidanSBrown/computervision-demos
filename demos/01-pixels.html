@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pixels Are Numbers</title>
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="site">
+  <nav class="site-nav">
+    <a class="home" href="../index.html">What does a computer see?</a>
+    <a href="01-pixels.html" aria-current="page">1 Pixels</a>
+    <a href="02-convolution.html">2 Filters</a>
+    <a href="03-layers.html">3 Layers</a>
+    <a href="04-decision.html">4 Decision</a>
+    <a href="05-shortcuts.html">5 Shortcuts</a>
+  </nav>
+
+  <section class="demo">
+    <div class="demo-bar">
+      <span class="num">DEMO 1</span>
+      <h1>An image is a grid of numbers</h1>
+      <button id="save">Save figure</button>
+    </div>
+    <div class="demo-body">
+      <div class="stage">
+        <p class="lede">Drag the box over the image. The right panel zooms in until each pixel shows the numbers the computer actually stores.</p>
+        <div class="panels">
+          <div class="panel">
+            <div class="panel-title">What you see <small id="dims"></small></div>
+            <canvas id="full" class="framed"></canvas>
+          </div>
+          <div class="panel">
+            <div class="panel-title">What the computer stores <small id="zoomlabel"></small></div>
+            <canvas id="zoom" class="framed"></canvas>
+          </div>
+        </div>
+        <div class="readout" id="readout" style="margin-top:14px"></div>
+      </div>
+
+      <aside class="controls">
+        <div class="control">
+          <div class="control-head">Image</div>
+          <div class="seg" id="source">
+            <button data-value="benign" aria-pressed="true">Mole</button>
+            <button data-value="malignant">Melanoma-like</button>
+            <button data-value="upload">Your own</button>
+          </div>
+          <input type="file" id="file" accept="image/*" hidden>
+          <span class="hint">Lesions are synthetic. Upload "Your own" and it stays in your browser.</span>
+        </div>
+
+        <div class="control">
+          <div class="control-head">Color channels</div>
+          <div class="seg" id="channel">
+            <button data-value="rgb" aria-pressed="true">RGB</button>
+            <button data-value="r">Red</button>
+            <button data-value="g">Green</button>
+            <button data-value="b">Blue</button>
+            <button data-value="gray">Gray</button>
+          </div>
+          <span class="hint">A color pixel is three numbers: how much red, green and blue light.</span>
+        </div>
+
+        <div class="control">
+          <div class="control-head"><label for="zoomsize">Zoom window</label><output for="zoomsize"></output></div>
+          <input type="range" id="zoomsize" min="4" max="64" step="1" value="8">
+          <div class="control-range"><span>4 px</span><span>64 px</span></div>
+        </div>
+
+        <div class="control">
+          <div class="control-head"><label for="res">Resolution</label><output for="res"></output></div>
+          <input type="range" id="res" min="3" max="8" step="1" value="7">
+          <div class="control-range"><span>8 px</span><span>256 px</span></div>
+          <span class="hint">Many medical image models are fed 224 × 224 or 256 × 256 images. Fewer pixels, less detail.</span>
+        </div>
+
+        <div class="control">
+          <div class="control-head"><label for="levels">Brightness levels</label><output for="levels"></output></div>
+          <input type="range" id="levels" min="1" max="8" step="1" value="8">
+          <div class="control-range"><span>2</span><span>256</span></div>
+          <span class="hint">Each number is usually 0 (dark) to 255 (bright): 256 possible values.</span>
+        </div>
+
+        <label class="check"><input type="checkbox" id="shownums" checked> Show numbers when zoomed in</label>
+
+        <div class="note">Hover over the zoomed panel to read a single pixel.</div>
+      </aside>
+    </div>
+  </section>
+</div>
+
+<script src="../assets/common.js"></script>
+<script src="01-pixels.js"></script>
+</body>
+</html>

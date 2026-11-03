@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Drawing the Line</title>
+  <link rel="stylesheet" href="../assets/style.css">
+  <style>
+    table.cm { border-collapse: collapse; font-size: 13px; }
+    table.cm th, table.cm td { border: 1px solid var(--line); padding: 6px 10px; text-align: center; }
+    table.cm th { background: #f6f5f1; font-weight: 600; }
+    table.cm td.good { background: #eef6f4; }
+    table.cm td.bad { background: #fbeceb; }
+    table.cm td b { font: 600 16px var(--mono); }
+    .stats { display: grid; grid-template-columns: auto auto; gap: 2px 14px; font-size: 13px; align-content: start; }
+    .stats span:nth-child(odd) { color: var(--muted); }
+    .stats span:nth-child(even) { font: 600 13px var(--mono); }
+  </style>
+</head>
+<body>
+<div class="site">
+  <nav class="site-nav">
+    <a class="home" href="../index.html">What does a computer see?</a>
+    <a href="01-pixels.html">1 Pixels</a>
+    <a href="02-convolution.html">2 Filters</a>
+    <a href="03-layers.html">3 Layers</a>
+    <a href="04-decision.html" aria-current="page">4 Decision</a>
+    <a href="05-shortcuts.html">5 Shortcuts</a>
+  </nav>
+
+  <section class="demo">
+    <div class="demo-bar">
+      <span class="num">DEMO 4</span>
+      <h1>From numbers to a decision: drawing the line</h1>
+      <button id="save">Save figure</button>
+    </div>
+    <div class="demo-body">
+      <div class="stage">
+        <p class="lede">Each dot is one lesion, with features extracted from the image in the network from our previous example. Imagine the classifier is a line. Everything on the red side is called "suspicious". Move the line with the sliders to alter the decision boundary, or let the computer fit it. This is a visual representation of the weights and biases that make the classifier, which are updated during model training to get the highest accuracy.</p>
+        <div class="panels">
+          <div class="panel">
+            <canvas id="plot" class="framed"></canvas>
+            <div class="legend">
+              <span><span class="swatch" style="background:var(--benign);border-radius:50%"></span>benign</span>
+              <span><span class="swatch" style="background:var(--malignant);transform:rotate(45deg)"></span>melanoma</span>
+              <span><span class="swatch" style="background:#fff;border:2px solid #111;border-radius:50%"></span>wrong answer</span>
+            </div>
+          </div>
+          <div class="panel" style="gap:14px">
+            <div>
+              <div class="panel-title" style="margin-bottom:6px">Scorecard</div>
+              <table class="cm">
+                <tr><th></th><th>Called suspicious</th><th>Called benign</th></tr>
+                <tr><th>Melanoma</th><td class="good"><b id="tp"></b><br>caught</td><td class="bad"><b id="fn"></b><br>missed</td></tr>
+                <tr><th>Benign</th><td class="bad"><b id="fp"></b><br>false alarm</td><td class="good"><b id="tn"></b><br>cleared</td></tr>
+              </table>
+            </div>
+            <div class="stats">
+              <span>Sensitivity (melanomas caught)</span><span id="sens"></span>
+              <span>Specificity (benign cleared)</span><span id="spec"></span>
+              <span>Accuracy</span><span id="acc"></span>
+            </div>
+            <div>
+              <div class="panel-title" style="margin-bottom:6px">Error during training <small id="steplabel"></small></div>
+              <canvas id="losscurve" class="framed"></canvas>
+            </div>
+            <div>
+              <div class="panel-title" style="margin-bottom:6px">Lesion under the mouse</div>
+              <div class="row" style="align-items:flex-start">
+                <canvas id="thumb" class="framed"></canvas>
+                <div class="readout" id="pointinfo" style="flex:1;min-width:150px">Hover over a dot.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="controls">
+        <div class="control">
+          <div class="control-head"><label for="w1">w₁ (weight on outline)</label><output for="w1"></output></div>
+          <input type="range" id="w1" min="-20" max="20" step="0.5" value="0">
+        </div>
+        <div class="control">
+          <div class="control-head"><label for="w2">w₂ (weight on wiggles)</label><output for="w2"></output></div>
+          <input type="range" id="w2" min="-20" max="20" step="0.5" value="8">
+        </div>
+        <div class="control">
+          <div class="control-head"><label for="b">b (bias / threshold)</label><output for="b"></output></div>
+          <input type="range" id="b" min="-20" max="20" step="0.25" value="-4">
+          <span class="hint">Lower the threshold to catch more melanomas, at the cost of more false alarms.</span>
+        </div>
+        <div class="readout" id="formula"></div>
+
+        <div class="control">
+          <div class="control-head">Let the computer fit it</div>
+          <div class="row">
+            <button class="primary" id="fit">▶ Train</button>
+            <button id="stepbtn">Step once</button>
+            <button id="reset">Start over</button>
+          </div>
+          <span class="hint">Each step checks every lesion against the current line, then nudges w₁, w₂ and b a little in the direction that reduces the error. Faint lines show where it has been.</span>
+        </div>
+        <div class="control">
+          <div class="control-head"><label for="speed">Speed</label><output for="speed"></output></div>
+          <input type="range" id="speed" min="1" max="20" step="1" value="5">
+          <div class="control-range"><span>slow</span><span>fast</span></div>
+        </div>
+        <div class="control">
+          <div class="control-head"><label for="rate">Step size (learning rate)</label><output for="rate"></output></div>
+          <input type="range" id="rate" min="1" max="20" step="1" value="8">
+          <div class="control-range"><span>1</span><span>20</span></div>
+          <span class="hint">Big steps get there faster but can overshoot. Tiny steps won't overshoot but take longer. Learning rate is a model parameter.</span>
+        </div>
+        <div class="note"><b>Score</b> = w₁ × outline + w₂ × wiggles + b. A positive score means "suspicious". Squashing the score through an S-shaped curve (the sigmoid) turns it into a probability. "Training" just means nudging w₁, w₂ and b, over and over, to make fewer mistakes.</div>
+        <div class="note">A real network does the same thing with hundreds of numbers instead of two, so the "line" becomes a surface in hundreds of dimensions. Nobody can plot that.</div>
+      </aside>
+    </div>
+  </section>
+</div>
+
+<script src="../assets/common.js"></script>
+<script src="../assets/network.js"></script>
+<script src="04-decision.js"></script>
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sliding Filters</title>
+  <link rel="stylesheet" href="../assets/style.css">
+  <style>
+    .kernel { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
+    .kernel input { width: 100%; text-align: center; font-family: var(--mono); padding: 5px 2px; }
+  </style>
+</head>
+<body>
+<div class="site">
+  <nav class="site-nav">
+    <a class="home" href="../index.html">What does a computer see?</a>
+    <a href="01-pixels.html">1 Pixels</a>
+    <a href="02-convolution.html" aria-current="page">2 Filters</a>
+    <a href="03-layers.html">3 Layers</a>
+    <a href="04-decision.html">4 Decision</a>
+    <a href="05-shortcuts.html">5 Shortcuts</a>
+  </nav>
+
+  <section class="demo">
+    <div class="demo-bar">
+      <span class="num">DEMO 2</span>
+      <h1>A filter slides over the image to find edges</h1>
+      <button id="save">Save figure</button>
+    </div>
+    <div class="demo-body">
+      <div class="stage">
+        <p class="lede">A 3 × 3 grid of weights (the filter, or kernel) slides across every position. At each stop it multiplies the 9 pixels under it by its 9 weights and adds them up. That number becomes a pixel of the output.</p>
+        <div class="panels">
+          <div class="panel">
+            <div class="panel-title">Input <small>64 × 64 brightness values</small></div>
+            <canvas id="input" class="framed"></canvas>
+          </div>
+          <div class="panel">
+            <div class="panel-title">Output <small id="outlabel"></small></div>
+            <canvas id="output" class="framed"></canvas>
+          </div>
+        </div>
+        <div class="panel" style="margin-top:16px">
+          <div class="panel-title">Close-up of one stop <small id="poslabel"></small></div>
+          <canvas id="closeup" class="framed"></canvas>
+        </div>
+        <div class="legend" style="margin-top:10px" id="legend"></div>
+      </div>
+
+      <aside class="controls">
+        <div class="control">
+          <div class="control-head">Image</div>
+          <div class="seg" id="source">
+            <button data-value="benign" aria-pressed="true">Mole</button>
+            <button data-value="malignant">Melanoma-like</button>
+          </div>
+        </div>
+
+        <div class="control">
+          <div class="control-head"><label for="preset">Filter</label></div>
+          <select id="preset">
+            <option value="vertical">Vertical edges</option>
+            <option value="horizontal">Horizontal edges</option>
+            <option value="outline">Outline (all edges)</option>
+            <option value="blur">Blur</option>
+            <option value="sharpen">Sharpen</option>
+            <option value="identity">Do nothing</option>
+            <option value="custom">Custom</option>
+          </select>
+          <div class="kernel" id="kernel"></div>
+          <span class="hint">Type your own weights to make a custom filter.</span>
+        </div>
+
+        <label class="check"><input type="checkbox" id="abs"> Show edge strength only (ignore sign)</label>
+
+        <div class="control">
+          <div class="control-head"><label for="px">Filter position x</label><output for="px"></output></div>
+          <input type="range" id="px" min="0" max="63" value="40">
+        </div>
+        <div class="control">
+          <div class="control-head"><label for="py">Filter position y</label><output for="py"></output></div>
+          <input type="range" id="py" min="0" max="63" value="22">
+          <span class="hint">Or click anywhere on the input.</span>
+        </div>
+
+        <button class="primary" id="scan">▶ Scan the whole image</button>
+
+        <div class="note"><b>Why it finds edges:</b> on areas of skin with little contrast the negative and positive weights cancel to about 0. Where dark and light colors meet they don't, so the output lights up along the lesion's border, enhancing the contrast.</div>
+      </aside>
+    </div>
+  </section>
+</div>
+
+<script src="../assets/common.js"></script>
+<script src="02-convolution.js"></script>
+</body>
+</html>

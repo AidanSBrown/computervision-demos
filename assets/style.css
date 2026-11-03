@@ -1,0 +1,163 @@
+/* Shared look for every demo: a framed "demo window" with a figure area
+   on the left and a control panel on the right, in the spirit of the
+   Neural Network Design demos. Light theme only so screenshots match print. */
+
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap");
+
+:root {
+  --bg: #f4f3ef;
+  --panel: #ffffff;
+  --ink: #1d1d1f;
+  --muted: #6b6a66;
+  --line: #dedbd2;
+  --bar: #3d4d66;
+  --bar-ink: #f4f3ef;
+  --accent: #b5541c;
+  --benign: #2a8c82;
+  --malignant: #c75d66;
+  --radius: 10px;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 14px/1.6 var(--mono);
+}
+
+a { color: var(--accent); }
+
+/* ---------- site header ---------- */
+.site {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 18px 16px 48px;
+}
+.site-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 16px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+.site-nav .home { font-weight: 700; color: var(--ink); text-decoration: none; margin-right: auto; }
+.site-nav a { text-decoration: none; color: var(--bar); }
+.site-nav a:hover { text-decoration: underline; }
+.site-nav a[aria-current="page"] { color: var(--malignant); font-weight: 700; }
+
+/* ---------- demo window ---------- */
+.demo {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+.demo-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bar);
+  color: var(--bar-ink);
+  padding: 10px 16px;
+}
+.demo-bar .num {
+  font: 600 12px var(--mono);
+  letter-spacing: 0.08em;
+  opacity: 0.7;
+}
+.demo-bar h1 { font-size: 17px; margin: 0; font-weight: 600; flex: 1; }
+.demo-bar button { background: transparent; color: var(--bar-ink); border-color: rgba(255, 255, 255, 0.35); }
+.demo-bar button:hover { background: rgba(255, 255, 255, 0.1); }
+
+.demo-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+}
+.stage {
+  padding: 18px;
+  min-width: 0;
+  overflow-x: auto;
+}
+.controls {
+  border-left: 1px solid var(--line);
+  padding: 16px 18px;
+  background: #fbfaf7;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+@media (max-width: 860px) {
+  .demo-body { grid-template-columns: 1fr; }
+  .controls { border-left: 0; border-top: 1px solid var(--line); }
+}
+
+.lede { margin: 0 0 14px; color: var(--muted); max-width: 70ch; }
+
+/* ---------- figure panels ---------- */
+.panels { display: flex; flex-wrap: wrap; gap: 18px; align-items: flex-start; }
+.panel { display: flex; flex-direction: column; gap: 6px; }
+.panel-title { font-size: 13px; font-weight: 600; }
+.panel-title small { font-weight: 400; color: var(--muted); }
+canvas { display: block; max-width: 100%; }
+canvas.framed { border: 1px solid var(--line); border-radius: 4px; }
+.readout {
+  font: 13px/1.5 var(--mono);
+  color: var(--ink);
+  background: #f6f5f1;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 8px 10px;
+  white-space: pre-wrap;
+}
+
+/* ---------- controls ---------- */
+.control { display: flex; flex-direction: column; gap: 4px; }
+.control-head { display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; }
+.control-head output { font: 13px var(--mono); color: var(--accent); }
+.control-range { display: flex; justify-content: space-between; font: 11px var(--mono); color: var(--muted); }
+.control .hint { font-size: 12px; color: var(--muted); }
+input[type="range"] { width: 100%; accent-color: var(--accent); }
+input[type="checkbox"] { accent-color: var(--accent); }
+select, button, input[type="number"] {
+  font: inherit;
+  font-size: 13px;
+  padding: 5px 9px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fff;
+  color: var(--ink);
+}
+button { cursor: pointer; }
+button:hover { background: #f1efe9; }
+button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+button.primary:hover { filter: brightness(1.08); }
+.row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.seg { display: flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.seg button { border: 0; border-radius: 0; flex: 1; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--bar); color: #fff; }
+label.check { display: flex; gap: 6px; align-items: center; font-size: 13px; }
+
+.note {
+  font-size: 12.5px;
+  color: var(--muted);
+  border-top: 1px dashed var(--line);
+  padding-top: 10px;
+}
+.note b { color: var(--ink); }
+
+.legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--muted); }
+.swatch { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
+
+/* Screenshot mode (?clean): hides the site nav so the demo window fills the shot. */
+body.clean .site-nav, body.clean .site-foot { display: none; }
+body.clean .site { padding: 0; max-width: none; }
+body.clean .demo { border-radius: 0; border: 0; }
+
+.site-foot { margin-top: 18px; font-size: 12.5px; color: var(--muted); }

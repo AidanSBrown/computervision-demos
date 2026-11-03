@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Layers of Filters</title>
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="site">
+  <nav class="site-nav">
+    <a class="home" href="../index.html">What does a computer see?</a>
+    <a href="01-pixels.html">1 Pixels</a>
+    <a href="02-convolution.html">2 Filters</a>
+    <a href="03-layers.html" aria-current="page">3 Layers</a>
+    <a href="04-decision.html">4 Decision</a>
+    <a href="05-shortcuts.html">5 Shortcuts</a>
+  </nav>
+
+  <section class="demo">
+    <div class="demo-bar">
+      <span class="num">DEMO 3</span>
+      <h1>Stacking filters: from edges to shapes to a few numbers</h1>
+      <button id="save">Save figure</button>
+    </div>
+    <div class="demo-body">
+      <div class="stage">
+        <p class="lede">A convolutional neural network repeats the same steps: filter, keep the strong responses, shrink. Notice how during each round the number of pixels (neurons) shrinks until we arrive at two outputs, which feed the classifications. Each map is a different filter, and each filter looks for a different feature. The first layer finds edges, the next layer finds shapes, and the last layer finds patterns that are diagnostic of melanoma. Hover over any map to see which part of the image it is looking at, and how big the receptive field is.</p>
+        <canvas id="net" class="framed"></canvas>
+        <div class="readout" id="readout" style="margin-top:12px"></div>
+      </div>
+
+      <aside class="controls">
+        <div class="control">
+          <div class="control-head">Image</div>
+          <div class="seg" id="source">
+            <button data-value="benign" aria-pressed="true">Mole</button>
+            <button data-value="malignant">Melanoma-like</button>
+            <button data-value="random">Random</button>
+          </div>
+        </div>
+
+        <div class="control">
+          <div class="control-head"><label for="thresh">ReLU threshold</label><output for="thresh"></output></div>
+          <input type="range" id="thresh" min="0" max="1.5" step="0.05" value="0.1">
+          <div class="control-range"><span>0</span><span>1.5</span></div>
+          <span class="hint">ReLU ("rectified linear unit") sets every value below the threshold to zero. Weak responses, like skin texture, disappear.</span>
+        </div>
+
+        <div class="control">
+          <div class="control-head"><label for="pool">Pooling size</label><output for="pool"></output></div>
+          <input type="range" id="pool" min="1" max="4" step="1" value="2">
+          <div class="control-range"><span>1 (none)</span><span>4</span></div>
+          <span class="hint">Pooling keeps one value per block of pixels. The map shrinks, and exact positions blur away.</span>
+        </div>
+
+        <div class="control">
+          <div class="control-head">Pooling keeps</div>
+          <div class="seg" id="pooltype">
+            <button data-value="max" aria-pressed="true">Largest value</button>
+            <button data-value="avg">Average</button>
+          </div>
+        </div>
+
+        <div class="note">These filters were <b>chosen by hand</b> so they are easy to read. In a real network, all of the weights are learned from thousands of labeled images, and most learned filters are far harder to put a name to.</div>
+      </aside>
+    </div>
+  </section>
+</div>
+
+<script src="../assets/common.js"></script>
+<script src="../assets/network.js"></script>
+<script src="03-layers.js"></script>
+</body>
+</html>

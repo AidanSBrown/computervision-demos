@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Clever Hans Shortcuts</title>
+  <link rel="stylesheet" href="../assets/style.css">
+  <style>
+    .thumbs { display: grid; grid-template-columns: auto repeat(8, 44px); gap: 4px; align-items: center; }
+    .thumbs .rowlabel { font-size: 12px; color: var(--muted); padding-right: 6px; }
+    .thumbs canvas { width: 44px; height: 44px; border-radius: 3px; }
+    .verdict { font-size: 13.5px; border-left: 3px solid var(--accent); padding: 4px 10px; background: #fbf4ef; max-width: 46ch; }
+    .refs { font-size: 12px; color: var(--muted); }
+    .refs a { color: var(--muted); }
+    .refs li { margin-bottom: 4px; }
+    .refs ul { padding-left: 16px; margin: 6px 0 0; }
+  </style>
+</head>
+<body>
+<div class="site">
+  <nav class="site-nav">
+    <a class="home" href="../index.html">What does a computer see?</a>
+    <a href="01-pixels.html">1 Pixels</a>
+    <a href="02-convolution.html">2 Filters</a>
+    <a href="03-layers.html">3 Layers</a>
+    <a href="04-decision.html">4 Decision</a>
+    <a href="05-shortcuts.html" aria-current="page">5 Shortcuts</a>
+  </nav>
+
+  <section class="demo">
+    <div class="demo-bar">
+      <span class="num">DEMO 5</span>
+      <h1>Clever Hans: when a model learns the wrong clue</h1>
+      <button id="save">Save figure</button>
+    </div>
+    <div class="demo-body">
+      <div class="stage">
+        <p class="lede">A real model, trained live in your browser on 600 synthetic lesion photos. In this "hospital", suspicious lesions usually get a mark before the photo is taken. The model is never told what the mark means. It only learns which pixels predict the label.</p>
+        <div class="panels">
+          <div class="panel">
+            <div class="panel-title">Training photos <small id="trainlabel"></small></div>
+            <div class="thumbs" id="thumbs"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-title">What the model looks for</div>
+            <canvas id="template" class="framed"></canvas>
+            <span class="hint" style="font-size:11.5px;color:var(--muted);max-width:150px">The learned weights drawn as an image: the photo that would score "most melanoma".</span>
+          </div>
+        </div>
+
+        <div class="panels" style="margin-top:18px">
+          <div class="panel">
+            <div class="panel-title">Same benign mole, two photos <small>glow = pixels pushing toward "melanoma"</small></div>
+            <canvas id="pair" class="framed"></canvas>
+            <div class="row">
+              <button id="another">Another mole</button>
+              <label class="check"><input type="checkbox" id="overlay" checked> Show where the model looked</label>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-title">How often is it right? <small id="epochlabel"></small></div>
+            <canvas id="results" class="framed"></canvas>
+            <div class="verdict" id="verdict"></div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="controls">
+        <div class="control">
+          <div class="control-head">The shortcut</div>
+          <div class="seg" id="kind">
+            <button data-value="ink" aria-pressed="true">Ink mark</button>
+            <button data-value="ruler">Ruler</button>
+            <button data-value="tint">Camera</button>
+          </div>
+          <span class="hint" id="kindhint"></span>
+        </div>
+
+        <div class="control">
+          <div class="control-head"><label for="strength">How tied to the diagnosis</label><output for="strength"></output></div>
+          <input type="range" id="strength" min="0" max="100" step="5" value="90">
+          <div class="control-range"><span>not at all</span><span>almost always</span></div>
+          <span class="hint" id="strengthhint"></span>
+        </div>
+
+        <button class="primary" id="retrain">Retrain</button>
+
+        <div class="note">
+          <b>Three test sets</b>, never seen in training:<br>
+          <b>Same hospital</b>: marks used the same way.<br>
+          <b>New hospital</b>: nobody marks anything.<br>
+          <b>Marks on benign</b>: the clue now points the wrong way. This mirrors "matched" test sets that strip out the shortcut.
+        </div>
+
+        <div class="note refs">
+          <b>Real cases</b>
+          <ul>
+            <li>Pen-ink marks on pathology slides biased a melanoma triage model (<a href="https://openaccess.thecvf.com/content/ICCV2021W/CDPath/papers/Sankarapandian_A_Pathology_Deep_Learning_System_Capable_of_Triage_of_Melanoma_ICCVW_2021_paper.pdf">Sankarapandian et al., 2021</a>).</li>
+            <li>COVID-19 chest X-ray models leaned on text markers, image edges and patient positioning (<a href="https://www.nature.com/articles/s42256-021-00338-7">DeGrave et al., 2021</a>).</li>
+            <li>A hip-fracture model could identify the scanner (AUC 1.00) and "priority" orders. On matched test sets its fracture AUC fell to about 0.52 (<a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6550136/">Badgeley et al., 2019</a>).</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </section>
+</div>
+
+<script src="../assets/common.js"></script>
+<script src="05-shortcuts.js"></script>
+</body>
+</html>

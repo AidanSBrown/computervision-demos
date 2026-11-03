@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>What Does a Computer See?</title>
+  <meta name="description" content="Interactive demos: how an image becomes numbers, how a neural network turns those numbers into a diagnosis, and how it can learn the wrong clue.">
+  <link rel="stylesheet" href="assets/style.css">
+  <style>
+    .hero { padding: 28px 0 8px; max-width: 760px; }
+    .hero h1 { font-size: clamp(28px, 5vw, 42px); line-height: 1.1; margin: 0 0 10px; letter-spacing: -0.01em; }
+    .hero p { font-size: 17px; color: var(--muted); margin: 0; }
+    h2.part { font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 34px 0 12px; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+    .card {
+      display: flex; flex-direction: column; text-decoration: none; color: inherit;
+      background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden;
+      transition: transform 0.12s ease, box-shadow 0.12s ease;
+    }
+    .card:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07); }
+    .card canvas { width: 100%; aspect-ratio: 16 / 10; background: #f1efe9; }
+    .card .body { padding: 12px 14px 14px; }
+    .card .num { font: 600 11px var(--mono); color: var(--accent); letter-spacing: 0.06em; }
+    .card h3 { margin: 4px 0 6px; font-size: 16px; }
+    .card p { margin: 0; font-size: 13.5px; color: var(--muted); }
+  </style>
+</head>
+<body>
+<div class="site">
+  <header class="hero">
+    <h1>What does a computer see?</h1>
+    <p>Interactive companions to an explainer on computer vision in medicine: how a photo of a mole becomes a grid of numbers, how a neural network turns those numbers into a diagnosis, and how it can quietly learn the wrong clue.</p>
+  </header>
+
+  <h2 class="part">Part 1 · From pixels to a prediction</h2>
+  <div class="cards">
+    <a class="card" href="demos/01-pixels.html">
+      <canvas data-thumb="pixels"></canvas>
+      <div class="body"><span class="num">DEMO 1</span><h3>An image is a grid of numbers</h3><p>Zoom in until every pixel shows its red, green and blue values.</p></div>
+    </a>
+    <a class="card" href="demos/02-convolution.html">
+      <canvas data-thumb="filters"></canvas>
+      <div class="body"><span class="num">DEMO 2</span><h3>Filters find edges</h3><p>Slide a 3 × 3 filter across the image and watch the multiply-and-add.</p></div>
+    </a>
+    <a class="card" href="demos/03-layers.html">
+      <canvas data-thumb="layers"></canvas>
+      <div class="body"><span class="num">DEMO 3</span><h3>Layers build up shapes</h3><p>Filter, rectify, pool, repeat, until a whole image becomes a few numbers.</p></div>
+    </a>
+    <a class="card" href="demos/04-decision.html">
+      <canvas data-thumb="decision"></canvas>
+      <div class="body"><span class="num">DEMO 4</span><h3>Drawing the line</h3><p>Set the weights by hand or let gradient descent fit them. Trade missed cancers against false alarms.</p></div>
+    </a>
+  </div>
+
+  <h2 class="part">Part 2 · Where it goes wrong</h2>
+  <div class="cards">
+    <a class="card" href="demos/05-shortcuts.html">
+      <canvas data-thumb="shortcut"></canvas>
+      <div class="body"><span class="num">DEMO 5</span><h3>Clever Hans shortcuts</h3><p>Train a model where suspicious lesions get an ink mark, then test it where they don't.</p></div>
+    </a>
+  </div>
+
+  <p class="site-foot">Disclaimer: All lesion images are synthetic, generated in browser for display purposes. No patient data is used, and nothing you upload leaves your computer.</p>
+</div>
+
+<script src="assets/common.js"></script>
+<script>
+  // Small live previews for each card.
+  (function () {
+    const W = 320, H = 200;
+    const mole = CS.makeLesion(22, true, { hair: false });
+
+    function sobelMagnitude(gray, n) {
+      const out = new Float32Array(n * n);
+      const at = (x, y) => gray[CS.clamp(y, 0, n - 1) * n + CS.clamp(x, 0, n - 1)];
+      let max = 1e-6;
+      for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
+        const gx = at(x + 1, y - 1) + 2 * at(x + 1, y) + at(x + 1, y + 1) - at(x - 1, y - 1) - 2 * at(x - 1, y) - at(x - 1, y + 1);
+        const gy = at(x - 1, y + 1) + 2 * at(x, y + 1) + at(x + 1, y + 1) - at(x - 1, y - 1) - 2 * at(x, y - 1) - at(x + 1, y - 1);
+        out[y * n + x] = Math.hypot(gx, gy);
+        max = Math.max(max, out[y * n + x]);
+      }
+      return out.map((v) => v / max);
+    }
+
+    const draw = {
+      pixels(ctx) {
+        const img = CS.renderLesion(mole, 18);
+        CS.drawPixelated(ctx, img, 0, (H - W) / 2, W, W);
+      },
+      filters(ctx) {
+        const n = 80;
+        const img = CS.renderLesion(mole, n);
+        const edges = sobelMagnitude(CS.gray(CS.pixels(img)), n);
+        const y = (H - W / 2) / 2;
+        ctx.drawImage(img, 0, y, W / 2, W / 2);
+        CS.drawPixelated(ctx, CS.fieldToCanvas(edges, n, n, CS.heat), W / 2, y, W / 2, W / 2);
+      },
+      layers(ctx) {
+        const n = 64;
+        const edges = sobelMagnitude(CS.gray(CS.pixels(CS.renderLesion(mole, n))), n);
+        [64, 32, 16, 8].forEach((m, i) => {
+          const pooled = new Float32Array(m * m), f = n / m;
+          for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
+            const k = ((y / f) | 0) * m + ((x / f) | 0);
+            pooled[k] = Math.max(pooled[k], edges[y * n + x]);
+          }
+          const size = 130 - i * 26, x = 14 + i * 76 - i * i * 4, y = (H - size) / 2;
+          CS.drawPixelated(ctx, CS.fieldToCanvas(pooled, m, m, CS.heat), x, y, size, size);
+        });
+      },
+      decision(ctx) {
+        const r = CS.rng(3);
+        ctx.fillStyle = "rgba(199,93,102,0.12)";
+        ctx.beginPath(); ctx.moveTo(W * 0.25, 0); ctx.lineTo(W, 0); ctx.lineTo(W, H); ctx.lineTo(W * 0.75, H); ctx.fill();
+        ctx.strokeStyle = "#1d1d1f"; ctx.lineWidth = 2.5;
+        ctx.beginPath(); ctx.moveTo(W * 0.25, 0); ctx.lineTo(W * 0.75, H); ctx.stroke();
+        for (let i = 0; i < 70; i++) {
+          const mal = i % 2 === 0;
+          const x = CS.clamp((mal ? 0.62 : 0.32) * W + r.normal() * 48, 8, W - 8);
+          const y = CS.clamp((mal ? 0.38 : 0.62) * H + r.normal() * 34, 8, H - 8);
+          ctx.fillStyle = mal ? "#c75d66" : "#2a8c82";
+          ctx.beginPath();
+          if (mal) { ctx.moveTo(x, y - 5); ctx.lineTo(x + 5, y); ctx.lineTo(x, y + 5); ctx.lineTo(x - 5, y); }
+          else ctx.arc(x, y, 4, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      },
+      shortcut(ctx) {
+        const p = CS.makeLesion(11, false, { hair: false });
+        ctx.drawImage(CS.renderLesion(p, 160), 0, (H - 160) / 2, 160, 160);
+        ctx.drawImage(CS.renderLesion(p, 160, { ink: true }), 160, (H - 160) / 2, 160, 160);
+        ctx.font = "600 12px 'JetBrains Mono', ui-monospace, monospace";
+        ctx.fillStyle = "#1d1d1f";
+        ctx.fillText("same mole", 10, H - 8);
+        ctx.fillText("+ ink mark", 170, H - 8);
+      },
+    };
+
+    const drawAll = () => document.querySelectorAll("canvas[data-thumb]").forEach((c) => {
+      const ctx = CS.hidpi(c, W, H);
+      c.style.width = "100%";
+      ctx.fillStyle = "#f1efe9";
+      ctx.fillRect(0, 0, W, H);
+      draw[c.dataset.thumb](ctx);
+    });
+    drawAll();
+    CS.fontsReady.then(drawAll);
+  })();
+</script>
+</body>
+</html>
