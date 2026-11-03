@@ -2,7 +2,7 @@
 
 Interactive demos for [the Catalyst](https://www.catalyst-magazine.com/) article explainer on computer vision in medicine. Demos follow the article structure, moving from how an image is stored on a computer to how computer vision models process images to detect features. Other articles I've written for the catalyst can be found [here](https://www.catalyst-magazine.com/articles?q=aidan+brown). 
 
-**Live demos:** `https://<your-username>.github.io/<repo-name>/` (after enabling GitHub Pages, see below)
+[Find live demos here](https://aidansbrown.github.io/computervision-demos/)
 
 | # | Demo | What you can do |
 |---|------|-----------------|
@@ -22,36 +22,15 @@ Every lesion is synthetic, drawn from a few parameters (size, border irregularit
 
 They are not realistic enough to train a real diagnostic model, as they are meant to be simpler explainers.
 
-## Running locally
+## Running on your own machine
 
-To run locally, with no build step and no dependencies. Serve the folder with any static server:
+To run locally, with no build step and no dependencies. Serve the folder with any localhost server:
 
 ```bash
 python3 -m http.server 8000
 ```
 
 Then open <http://localhost:8000>. Opening the HTML files directly also works in most browsers.
-
-## Making figures
-
-- **Save figure** (top-right of each demo) downloads a clean PNG of the main panels.
-- Adding `?clean` to any demo URL hides the site navigation, for tidy screenshots.
-- Demo 4 accepts `?trained` to show the fitted line, its training trail, and the error curve.
-- Demo 5 accepts settings in the URL, e.g. `05-shortcuts.html?kind=ruler&strength=90` (`kind` = `ink`, `ruler` or `tint`; `strength` = 0–100).
-
-The PNGs in `figures/` were captured with headless Chrome:
-
-```bash
-"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --hide-scrollbars \
-  --window-size=1280,1000 --force-device-scale-factor=2 --virtual-time-budget=15000 \
-  --screenshot=figures/demo5-ink.png "http://localhost:8000/demos/05-shortcuts.html?clean&kind=ink&strength=90"
-```
-
-## Publishing on GitHub Pages
-
-1. Create a repository and push this folder to it.
-2. In the repository, go to **Settings → Pages**, set *Source* to "Deploy from a branch", branch `main`, folder `/ (root)`.
-3. The site appears at `https://<your-username>.github.io/<repo-name>/` within a minute or two.
 
 ## How it's built
 
