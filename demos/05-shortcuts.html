@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Clever Hans Shortcuts</title>
+  <title>Clever Hans shortcuts</title>
   <link rel="stylesheet" href="../assets/style.css">
   <style>
     .thumbs { display: grid; grid-template-columns: auto repeat(8, 44px); gap: 4px; align-items: center; }
@@ -35,7 +35,7 @@
     </div>
     <div class="demo-body">
       <div class="stage">
-        <p class="lede">A real model, trained live in your browser on 600 synthetic lesion photos. In this "hospital", suspicious lesions usually get a mark before the photo is taken. The model is never told what the mark means. It only learns which pixels predict the label.</p>
+        <p class="lede">This is a real model, trained in your browser on 600 synthetic lesion photos. In this "hospital," suspicious lesions are usually photographed differently: with an ink mark, a ruler, or a different camera. Nobody tells the model what any of that means, so it learns whichever pixels predict the label.</p>
         <div class="panels">
           <div class="panel">
             <div class="panel-title">Training photos <small id="trainlabel"></small></div>
@@ -44,7 +44,7 @@
           <div class="panel">
             <div class="panel-title">What the model looks for</div>
             <canvas id="template" class="framed"></canvas>
-            <span class="hint" style="font-size:11.5px;color:var(--muted);max-width:150px">The learned weights drawn as an image: the photo that would score "most melanoma".</span>
+            <span class="hint" style="font-size:11.5px;color:var(--muted);max-width:150px">The learned weights drawn as an image, showing the photo that would score "most melanoma."</span>
           </div>
         </div>
 
@@ -89,7 +89,7 @@
           <b>Three test sets</b>, never seen in training:<br>
           <b>Same hospital</b>: marks used the same way.<br>
           <b>New hospital</b>: nobody marks anything.<br>
-          <b>Marks on benign</b>: the clue now points the wrong way. This mirrors "matched" test sets that strip out the shortcut.
+          <b>Marks on benign</b>: the clue now points the wrong way, like the "matched" test sets researchers use to strip out a shortcut.
         </div>
 
         <div class="note refs">

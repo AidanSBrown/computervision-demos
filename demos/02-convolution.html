@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Sliding Filters</title>
+  <title>Sliding filters</title>
   <link rel="stylesheet" href="../assets/style.css">
   <style>
     .kernel { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
@@ -85,7 +85,7 @@
 
         <button class="primary" id="scan">▶ Scan the whole image</button>
 
-        <div class="note"><b>Why it finds edges:</b> on areas of skin with little contrast the negative and positive weights cancel to about 0. Where dark and light colors meet they don't, so the output lights up along the lesion's border, enhancing the contrast.</div>
+        <div class="note">On plain skin the brightness barely changes, so the negative and positive weights cancel to about 0. Where the dark lesion meets lighter skin they don't cancel, and the output lights up along the border. That is how the filter finds edges.</div>
       </aside>
     </div>
   </section>

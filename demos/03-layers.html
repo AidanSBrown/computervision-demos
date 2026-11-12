@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Layers of Filters</title>
+  <title>Layers of filters</title>
   <link rel="stylesheet" href="../assets/style.css">
 </head>
 <body>
@@ -20,12 +20,12 @@
   <section class="demo">
     <div class="demo-bar">
       <span class="num">DEMO 3</span>
-      <h1>Stacking filters: from edges to shapes to a few numbers</h1>
+      <h1>Stacking filters: from edges to shapes to two numbers</h1>
       <button id="save">Save figure</button>
     </div>
     <div class="demo-body">
       <div class="stage">
-        <p class="lede">A convolutional neural network repeats the same steps: filter, keep the strong responses, shrink. Notice how during each round the number of pixels (neurons) shrinks until we arrive at two outputs, which feed the classifications. Each map is a different filter, and each filter looks for a different feature. The first layer finds edges, the next layer finds shapes, and the last layer finds patterns that are diagnostic of melanoma. Hover over any map to see which part of the image it is looking at, and how big the receptive field is.</p>
+        <p class="lede">A convolutional neural network repeats the same steps: filter, keep the strong responses, and shrink. Each round the maps of pixels (neurons) get smaller, until the whole image is down to two numbers that feed the classifier in demo 4. Each map comes from a different filter looking for a different feature. Here the first layer finds edges and the second combines them into shapes: the lesion's outline, and the wiggles and patches in it. A deeper network keeps going, and its last layers find patterns that tend to go with melanoma. Hover over any map to see which patch of the image it depends on (its receptive field).</p>
         <canvas id="net" class="framed"></canvas>
         <div class="readout" id="readout" style="margin-top:12px"></div>
       </div>
@@ -62,7 +62,7 @@
           </div>
         </div>
 
-        <div class="note">These filters were <b>chosen by hand</b> so they are easy to read. In a real network, all of the weights are learned from thousands of labeled images, and most learned filters are far harder to put a name to.</div>
+        <div class="note">These filters were <b>chosen by hand</b> so they are easy to read. A real network learns all of its weights from thousands of labeled images, and most of its filters are much harder to name.</div>
       </aside>
     </div>
   </section>

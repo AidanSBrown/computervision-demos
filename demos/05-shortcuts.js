@@ -356,14 +356,14 @@
     let verdict;
     if (run.epoch < EPOCHS) verdict = "Training…";
     else if (flipped < 0.45) {
-      verdict = "The model mostly reads the " + label + ", not the lesion. It scores " + pct(same) +
+      verdict = "The model mostly reads the " + label + " instead of the lesion. It scores " + pct(same) +
         " at its own hospital, but once " + KINDS[run.kind].onBenign + " it does worse than a coin flip (" + pct(flipped) + ").";
     } else if (same - fresh > 0.06 || same - flipped > 0.1) {
       verdict = "Part of what the model learned is the " + label + ". It scores " + pct(same) +
         " at its own hospital but " + pct(fresh) + " " + KINDS[run.kind].absent + ".";
     } else {
-      verdict = "With little link between the " + label + " and the diagnosis, the model has to learn the lesion itself. " +
-        "Its scores are lower, but they hold up at a new hospital.";
+      verdict = "The " + label + " says little about the diagnosis here, so the model has to learn the lesion itself. " +
+        "It scores lower at its own hospital, but the score holds up at a new one.";
     }
     document.getElementById("verdict").textContent = verdict;
   }

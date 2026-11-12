@@ -36,7 +36,7 @@
     </div>
     <div class="demo-body">
       <div class="stage">
-        <p class="lede">Each dot is one lesion, with features extracted from the image in the network from our previous example. Imagine the classifier is a line. Everything on the red side is called "suspicious". Move the line with the sliders to alter the decision boundary, or let the computer fit it. This is a visual representation of the weights and biases that make the classifier, which are updated during model training to get the highest accuracy.</p>
+        <p class="lede">Each dot is one lesion, placed by the two numbers the network in demo 3 pulled out of its image. The classifier here is a straight line, and everything on the red side is called "suspicious." Move the line with the sliders, or let the computer fit it. The sliders are the classifier's weights and bias, the same numbers that training adjusts to make fewer mistakes.</p>
         <div class="panels">
           <div class="panel">
             <canvas id="plot" class="framed"></canvas>
@@ -109,10 +109,10 @@
           <div class="control-head"><label for="rate">Step size (learning rate)</label><output for="rate"></output></div>
           <input type="range" id="rate" min="1" max="20" step="1" value="8">
           <div class="control-range"><span>1</span><span>20</span></div>
-          <span class="hint">Big steps get there faster but can overshoot. Tiny steps won't overshoot but take longer. Learning rate is a model parameter.</span>
+          <span class="hint">Big steps get there faster but can overshoot the best line, and small steps are steadier but slower. The learning rate is a hyperparameter: you set it, and training doesn't change it.</span>
         </div>
-        <div class="note"><b>Score</b> = w₁ × outline + w₂ × wiggles + b. A positive score means "suspicious". Squashing the score through an S-shaped curve (the sigmoid) turns it into a probability. "Training" just means nudging w₁, w₂ and b, over and over, to make fewer mistakes.</div>
-        <div class="note">A real network does the same thing with hundreds of numbers instead of two, so the "line" becomes a surface in hundreds of dimensions. Nobody can plot that.</div>
+        <div class="note"><b>Score</b> = w₁ × outline + w₂ × wiggles + b. A positive score means "suspicious." Squashing the score through an S-shaped curve (the sigmoid) turns it into a probability. "Training" just means nudging w₁, w₂ and b, over and over, to make fewer mistakes.</div>
+        <div class="note">The last layer of a real network does the same thing with hundreds of numbers instead of two, so the "line" becomes a flat surface in hundreds of dimensions, which no one can plot.</div>
       </aside>
     </div>
   </section>
